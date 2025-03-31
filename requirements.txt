@@ -1,0 +1,9 @@
+streamlit
+pandas
+numpy
+selenium
+webdriver_manager
+bs4
+plotly
+seaborn
+google-genai
