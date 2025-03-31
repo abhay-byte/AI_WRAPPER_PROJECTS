@@ -5,6 +5,7 @@ from selenium.webdriver.chrome.options import Options
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
 import time
+import requests
 
 def parse_pdf(uploaded_file):
     pdf_reader = PyPDF2.PdfReader(uploaded_file)
@@ -14,22 +15,11 @@ def parse_pdf(uploaded_file):
     return text
 
 def parse_website(url):
-    options = Options()
-    options.add_argument("--headless")  # Run Chrome in headless mode
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--remote-debugging-port=9222")  # Fix potential debugging issues
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.get(url, headers=headers)
 
-    # Automatically install & use the latest ChromeDriver
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=options)
-    
-    driver.get(url)
-    time.sleep(5) 
-    
-    soup = BeautifulSoup(driver.page_source, 'html.parser')
-    text = soup.get_text()
-    
-    driver.quit()
-    
-    return text
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, "html.parser")
+        return soup.get_text()
+    else:
+        return f"Failed to fetch page: {response.status_code}"
