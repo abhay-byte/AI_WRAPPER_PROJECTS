@@ -7,3 +7,4 @@ bs4
 plotly
 seaborn
 google-genai
+PyPDF2
