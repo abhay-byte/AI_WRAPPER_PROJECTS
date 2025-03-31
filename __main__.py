@@ -33,7 +33,6 @@ def privacy_policy_checker():
 def investment_guide():
     st.title("Investment Growth Projection")
     amount = st.text_input("Enter The Amount to be Invested Per Month", value="")
-    st.button("Submit", on_click = ()=>{
     if amount:
         with st.spinner("Plotting Graph...",show_time=True):
             csv_data = invest.get_csv_data(amount)
@@ -54,10 +53,6 @@ def investment_guide():
         st.code(get_function_code(invest.get_csv_data), language="python")
         st.code(get_function_code(invest.get_graph), language="python")
         st.code(get_function_code(gemini.generate), language="python")
-    }
-
-              )
-    
 
 
 def format_checker():
