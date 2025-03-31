@@ -3,10 +3,14 @@ import parser
 import investment as invest
 import data
 from io import StringIO
+import matplotlib.pyplot as plt
 
 import streamlit as st
 import pandas as pd
+import inspect
 
+def get_function_code(func):
+    return inspect.getsource(func)
 
 def add_markdown(text):
     st.markdown(text)    
@@ -17,8 +21,13 @@ def privacy_policy_checker():
     if url and url != "example.com/privacy":
         with st.spinner("Getting the Privacy Policy...", show_time=True):
             website_content = parser.parse_website(url).strip()
-        with st.spinner("Checking the Privacy Policy..."):
+        with st.spinner("Checking the Privacy Policy...",show_time=True):
             add_markdown(gemini.generate(data.promt_privacy + website_content))
+    show_code = st.toggle("Show Code")
+    if show_code:
+        st.code(get_function_code(investment_guide), language="python")
+        st.code(get_function_code(parser.parse_website), language="python")
+        st.code(get_function_code(gemini.generate), language="python")
 
 
 def investment_guide():
@@ -29,13 +38,22 @@ def investment_guide():
             csv_data = invest.get_csv_data(amount)
             df = pd.read_csv(csv_data, sep=",")
             st.header("Investment Growth Over Time") 
-            st.plotly_chart(invest.get_graph(df), use_container_width=True)
+            fig, ax = plt.subplots(figsize=(10, 5))
+            invest.get_graph(df, ax)
+            st.pyplot(fig)
             
         with st.spinner("Generating further details...",show_time=True):
             st.header("Investment Details")
             add_markdown(gemini.generate(data.promt_investment + 
                                          data.investment_types + 
                                          csv_data.getvalue()))
+    show_code = st.toggle("Show Code")
+    if show_code:
+        st.code(get_function_code(investment_guide), language="python")
+        st.code(get_function_code(invest.get_csv_data), language="python")
+        st.code(get_function_code(invest.get_graph), language="python")
+        st.code(get_function_code(gemini.generate), language="python")
+
 
 def format_checker():
     st.title("Project Format Checker")
@@ -46,8 +64,16 @@ def document_summarizer():
     document_file = st.file_uploader("Choose a file to upload")
     if document_file is not None:
         pdf_text = parser.parse_pdf(document_file)
-        with st.spinner("Generating Summary..."):
+        with st.spinner("Generating Summary...",show_time=True):
             add_markdown(gemini.generate(data.promt_pdf+pdf_text))
+    
+    show_code = st.toggle("Show Code")
+    if show_code:
+        st.code(get_function_code(document_summarizer), language="python")
+        st.code(get_function_code(parser.parse_pdf), language="python")
+        st.code(get_function_code(gemini.generate), language="python")
+
+
             
 pg = st.navigation([document_summarizer,privacy_policy_checker
                     ,investment_guide])
