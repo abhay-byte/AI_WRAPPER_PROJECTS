@@ -16,10 +16,10 @@ def get_graph(df, ax):
                       var_name="Year", 
                       value_name="Projected Value (INR)")
     
-    sns.lineplot(data=df_long, x="Year", y="Projected (INR)", 
+    sns.lineplot(data=df_long, x="Year", y="Projected Value (INR)", 
                  hue="Investment Type", marker="o", ax=ax)
     
     ax.set_title("Investment Growth Over Time")
     ax.set_xlabel("Investment Year")
-    ax.set_ylabel("Projected (INR)")
+    ax.set_ylabel("Projected Value (INR)")
     ax.legend(title="Investment Type")
