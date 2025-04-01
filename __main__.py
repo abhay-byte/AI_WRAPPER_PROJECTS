@@ -41,8 +41,6 @@ def investment_guide():
             st.header("Investment Growth Over Time") 
 
             st.plotly_chart(invest.get_graph(df), use_container_width=True)
-            fig = plt.subplots(figsize=(10, 5))
-            st.pyplot(fig)
             
         with st.spinner("Generating further details...",show_time=True):
             st.header("Investment Details")
