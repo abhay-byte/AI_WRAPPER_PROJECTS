@@ -23,7 +23,7 @@ def privacy_policy_checker():
             website_content = parser.parse_website(url).strip()
         with st.spinner("Checking the Privacy Policy...",show_time=True):
             add_markdown(gemini.generate(data.promt_privacy + website_content))
-    show_code = st.toggle("Show Code")
+    show_code = st.toggle("Show Code",True)
     if show_code:
         st.code(get_function_code(privacy_policy_checker), language="python")
         st.code(get_function_code(parser.parse_website), language="python")
@@ -48,7 +48,7 @@ def investment_guide():
             add_markdown(gemini.generate(data.promt_investment + 
                                          data.investment_types + 
                                          csv_data.getvalue()))
-    show_code = st.toggle("Show Code")
+    show_code = st.toggle("Show Code",True)
     if show_code:
         st.code(get_function_code(investment_guide), language="python")
         st.code(get_function_code(invest.get_csv_data), language="python")
@@ -69,7 +69,7 @@ def document_summarizer():
         with st.spinner("Generating Summary...",show_time=True):
             add_markdown(gemini.generate(data.promt_pdf+pdf_text))
     
-    show_code = st.toggle("Show Code")
+    show_code = st.toggle("Show Code",True)
     if show_code:
         st.code(get_function_code(document_summarizer), language="python")
         st.code(get_function_code(parser.parse_pdf), language="python")
