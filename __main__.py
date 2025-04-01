@@ -39,10 +39,9 @@ def investment_guide():
             csv_data = invest.get_csv_data(amount)
             df = pd.read_csv(csv_data, sep=",")
             st.header("Investment Growth Over Time") 
-            
+
             st.plotly_chart(invest.get_graph(df), use_container_width=True)
-            fig, ax = plt.subplots(figsize=(10, 5))
-            invest.get_graph(df, ax)
+            fig = plt.subplots(figsize=(10, 5))
             st.pyplot(fig)
             
         with st.spinner("Generating further details...",show_time=True):
