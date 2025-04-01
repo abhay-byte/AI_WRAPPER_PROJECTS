@@ -12,7 +12,7 @@ data_format = {
 
 investment_types = """
 Investment Types: Stock Market Investments,Fixed Income Investments,Real Estate Investments,
-Commodities & Precious Metals,Alternative Investments(eg. Cryptocurrencies)
+Commodities & Precious Metals,: Alternative Investments(eg. Cryptocurrencies)
     """
 def get_systemInstructions(amount):
     systemInstructions = f"""

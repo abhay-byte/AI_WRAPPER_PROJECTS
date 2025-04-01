@@ -25,9 +25,10 @@ def privacy_policy_checker():
             add_markdown(gemini.generate(data.promt_privacy + website_content))
     show_code = st.toggle("Show Code")
     if show_code:
-        st.code(get_function_code(investment_guide), language="python")
+        st.code(get_function_code(privacy_policy_checker), language="python")
         st.code(get_function_code(parser.parse_website), language="python")
         st.code(get_function_code(gemini.generate), language="python")
+        st.code(get_function_code(data), language="python")
 
 
 def investment_guide():
@@ -53,6 +54,7 @@ def investment_guide():
         st.code(get_function_code(invest.get_csv_data), language="python")
         st.code(get_function_code(invest.get_graph), language="python")
         st.code(get_function_code(gemini.generate), language="python")
+        st.code(get_function_code(data), language="python")
 
 
 def format_checker():
@@ -72,6 +74,7 @@ def document_summarizer():
         st.code(get_function_code(document_summarizer), language="python")
         st.code(get_function_code(parser.parse_pdf), language="python")
         st.code(get_function_code(gemini.generate), language="python")
+        st.code(get_function_code(data), language="python")
 
 def data_constants():
     st.title("Data Constants Used in the Project")
@@ -80,7 +83,7 @@ def data_constants():
 pages = {
     "AI Apps": [
         st.Page(investment_guide, title="Investment Growth Projection"),
-        st.Page(document_summarizer, title="Dedocument Summarizer"),
+        st.Page(document_summarizer, title="Document Summarizer"),
         st.Page(privacy_policy_checker, title="Privacy Policy Checker"),
     ],
     "Format": [
