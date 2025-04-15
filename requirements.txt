@@ -8,3 +8,6 @@ plotly
 seaborn
 google-genai
 PyPDF2
+python-dotenv
+feedparser
+yfinance

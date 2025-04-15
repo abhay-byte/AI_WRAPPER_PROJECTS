@@ -1,8 +1,10 @@
 import base64
 import os
 from google import genai
-from pandas.core.dtypes.dtypes import re
 from google.genai import types
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def generate(input):
     
