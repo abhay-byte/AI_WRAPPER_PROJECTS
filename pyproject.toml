@@ -23,7 +23,8 @@ dependencies = [
     "yfinance",
     "fpdf",
     "PyPDF2",
-    "streamlit-chat"
+    "streamlit-chat",
+    "streamlit_authenticator"
 ]
 
 
