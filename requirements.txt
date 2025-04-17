@@ -12,4 +12,5 @@ python-dotenv
 feedparser
 yfinance
 fpdf
-streamlit-chat 
+streamlit-chat
+streamlit_authenticator
