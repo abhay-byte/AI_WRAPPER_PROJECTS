@@ -221,7 +221,7 @@ if st.session_state.authentication_status:
         if st.button("Calculate Investment"):
             basic_info_filled = bool(inputs.amount and inputs.investment_duration_in_years and inputs.rate_of_annual_return)
             if basic_info_filled:
-                with st.spinner("Plotting Graph..."):
+                with st.spinner("Plotting Graph...",show_time=True):
                     csv_data = invest.get_csv_data(inputs)
                     df = pd.read_csv(csv_data,on_bad_lines='skip')
                     st.header("Investment Growth Over Time") 
@@ -230,8 +230,11 @@ if st.session_state.authentication_status:
                     show_dataframe = st.toggle("Show Dataframe", True)            
                     if show_dataframe:
                         st.dataframe(df)
-                with st.spinner("Getting suggestions on what to invest in..."):
-                    st.header("Suggested Investments")
+                with st.spinner("Getting suggestions on what to invest in...",show_time=True):
+                    st.header("Suggested Investments Details")
+                    add_markdown(gemini.generate(data.get_suggested_investement(df,inputs)))
+                with st.spinner("Generating Report...",show_time=True):
+                    st.header("Detailed Investments Report")
                     add_markdown(gemini.generate(data.get_suggested_investement(df,inputs)))
             else:
                 st.error("Fill all required fields.")
@@ -269,7 +272,7 @@ if st.session_state.authentication_status:
                 st.markdown(investment['growth_potential'])
 
         st.markdown("---")
-        with st.spinner("Best Investment Type for Current Market Scenario"):
+        with st.spinner("Best Investment Type for Current Market Scenario",show_time=True):
             st.header("Suggested Asset Types To Invest")
             add_markdown(gemini.generate(data.get_assest_type_selection()))
 
@@ -279,7 +282,7 @@ if st.session_state.authentication_status:
         document_file = st.file_uploader("Choose a file to upload")
         if document_file is not None:
             pdf_text = parser.parse_pdf(document_file)
-            with st.spinner("Generating Summary..."):
+            with st.spinner("Generating Summary...",show_time=True):
                 add_markdown(gemini.generate(data.promt_pdf + pdf_text))
 
         show_code = st.toggle("Show Code", True)
@@ -298,13 +301,13 @@ if st.session_state.authentication_status:
         if "generated" not in st.session_state:
             st.session_state.generated = []
 
-        def fake_chatbot_response(user_input):
+        def chatbot_response(user_input):
             return gemini.generate(data.chatbot + "User Promt: " + user_input)
 
         def on_input_change():
             user_input = st.session_state.user_input
             st.session_state.past.append(user_input)
-            bot_reply = fake_chatbot_response(user_input)
+            bot_reply = chatbot_response(user_input)
             st.session_state.generated.append(bot_reply)
             st.session_state.user_input = ""
 
