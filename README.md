@@ -2,6 +2,9 @@
 
 ![dashboard](src/dashboard.PNG)
 
+Username: jsmith
+Password: abc
+
 **Live App**: [https://aiwrapper.streamlit.app](https://aiwrapper.streamlit.app)
 
 AI Wrapper Project is a powerful, modular AI-driven platform that brings together financial tools, news aggregation, and generative AI in a clean and user-friendly interface. Built using **Streamlit**, it aims to simplify complex decision-making by leveraging real-time data and AI insights.
