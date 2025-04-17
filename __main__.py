@@ -4,6 +4,10 @@ import data
 from io import StringIO
 import matplotlib.pyplot as plt
 
+import streamlit_authenticator as stauth
+import yaml
+from yaml.loader import SafeLoader
+
 import streamlit as st
 import pandas as pd
 import inspect
@@ -11,11 +15,36 @@ import parser
 
 st.set_page_config(layout="wide")
 
+with open('config.yaml') as file:
+    config = yaml.load(file, Loader=SafeLoader)
+
+
+# Initialize authenticator
+authenticator = stauth.Authenticate(
+    config['credentials'],
+    config['cookie']['name'],
+    config['cookie']['key'],
+    config['cookie']['expiry_days']
+)
+
+name, auth_status, username = authenticator.login('Login', 'sidebar')  # Changed 'main' to 'sidebar'
+
+# App content
+if auth_status:
+    authenticator.logout('Logout', 'sidebar')
+    st.sidebar.success(f"Welcome {name}!")
+    st.title(f"Hello, {name} 👋")
+    st.write("You are successfully logged in.")
+elif auth_status is False:
+    st.error("Invalid username or password.")
+elif auth_status is None:
+    st.warning("Please enter your credentials.")
+
 def get_function_code(func):
     return inspect.getsource(func)
 
 def add_markdown(text):
-    st.markdown(text)    
+    st.markdown(text)
 
 def go_to(page_name):
     st.session_state.page = page_name
@@ -25,7 +54,7 @@ def go_to(page_name):
 def dashboard():
     st.header("Dashboard")
     st.subheader("Welcome Back!")
-    
+
     col1, col2 = st.columns(2)
 
     with col1:
@@ -59,9 +88,6 @@ def dashboard():
         "Expenses": [3200, 3100, 3300, 3400, 3200]
     })
 
-
-
-
 def finance_manager():
     st.title("Finance Manager")
 
@@ -70,7 +96,7 @@ def display_investment_growth(df,inputs):
     # Get the CSV data
     csv_data = invest.get_csv_data(inputs)
     df = pd.read_csv(csv_data, on_bad_lines='skip')
-    
+
     # Extract available years
     if "Year" in df.columns:
         years = sorted(df["Year"].unique())
@@ -103,13 +129,13 @@ def investment_growth_prediction():
                 csv_data = invest.get_csv_data(inputs)
                 df = pd.read_csv(csv_data,on_bad_lines='skip')
 
-                st.header("Investment Growth Over Time") 
+                st.header("Investment Growth Over Time")
                 st.plotly_chart(invest.get_graph(df), use_container_width=True)
-                
-                show_dataframe = st.toggle("Show Dataframe",True)            
+
+                show_dataframe = st.toggle("Show Dataframe",True)
                 if show_dataframe:
                     st.dataframe(df)
-                    
+
             with st.spinner("Getting suggestions on what to invest in...",show_time=True):
                 st.header("Suggested Investments")
                 add_markdown(gemini.generate(data.get_suggested_investement(df,inputs)))
@@ -125,14 +151,14 @@ def investment_growth_prediction():
         #st.error("Fill all required fields.")
 
     show_code = st.toggle("Show Code",True)
-    
+
     if show_code:
         st.code(get_function_code(investment_growth_prediction), language="python")
         st.code(get_function_code(invest.get_csv_data), language="python")
         st.code(get_function_code(invest.get_graph), language="python")
         st.code(get_function_code(gemini.generate), language="python")
         st.code(get_function_code(data), language="python")
-    
+
 
 def invest_type_guide():
     """Displays investment type information using Streamlit expanders."""
@@ -141,14 +167,14 @@ def invest_type_guide():
 
     st.info("""
     **Important Considerations:**
-    *   **Growth Potential is Not Guaranteed:** Past performance doesn't predict future results.
-    *   **Risk vs. Reward:** Higher potential growth usually comes with higher risk.
-    *   **Time Horizon:** Growth often depends on the investment duration.
-    *   **Diversification:** Spreading investments across types helps manage risk.
+    * **Growth Potential is Not Guaranteed:** Past performance doesn't predict future results.
+    * **Risk vs. Reward:** Higher potential growth usually comes with higher risk.
+    * **Time Horizon:** Growth often depends on the investment duration.
+    * **Diversification:** Spreading investments across types helps manage risk.
     """)
 
     st.write("Click on each category below to see details, examples, and suggested growth potential.")
-    st.markdown("---") 
+    st.markdown("---")
 
     for investment in data.investment_data:
         with st.expander(f"**{investment['name']}**", expanded=False):
@@ -157,7 +183,7 @@ def invest_type_guide():
 
             st.subheader("Examples:")
             for example in investment['examples']:
-                st.markdown(f"- {example}") 
+                st.markdown(f"- {example}")
 
             st.markdown("---")
             st.subheader("Suggested Growth Potential & Risk Profile:")
@@ -176,7 +202,7 @@ def invest_analysis():
         pdf_text = parser.parse_pdf(document_file)
         with st.spinner("Generating Summary...",show_time=True):
             add_markdown(gemini.generate(data.promt_pdf+pdf_text))
-    
+
     show_code = st.toggle("Show Code",True)
     if show_code:
         st.code(get_function_code(invest_analysis), language="python")
@@ -241,14 +267,14 @@ pages = {
         st.Page(dashboard, title="Dashboard", icon=":material/home:"),
         st.Page(finance_manager, title="Finance Manager", icon=":material/savings:"),
         #st.Page(settings, title="Settings", icon=":material/settings:"),
-        ],
+    ],
 
     "AI Tools": [
         st.Page(investment_growth_prediction, title="Investment Growth Prediction", icon=":material/monitoring:"),
         st.Page(invest_type_guide, title="Investment Asset Types", icon=":material/format_list_bulleted:"),
         st.Page(invest_analysis, title="Portfolio Analysis", icon=":material/analytics:"),
-        st.Page(invest_chatbot, title="Financial Advisor", icon=":material/smart_toy:"),                                                                                              
-        ],
+        st.Page(invest_chatbot, title="Financial Advisor", icon=":material/smart_toy:"),
+    ],
 
     "Logout": [st.Page(logout, title="Logout", icon=":material/logout:"),],
 }
@@ -257,4 +283,3 @@ pg = st.navigation(pages)
 
 if __name__ == "__main__":
     pg.run()
-

@@ -1,0 +1,22 @@
+# config.yaml
+cookie:
+  expiry_days: 30
+  key: "random_signature_key"  # Any random string
+  name: "my_app_cookie"
+
+credentials:
+  usernames:
+    dhruv:
+      email: dhruv@gmail.com
+      first_name: Dhruv
+      last_name: Goel
+      password: dhruv123  # Will be hashed automatically
+      roles:
+        - admin
+    guest:
+      email: guest@email.com
+      first_name: Guest
+      last_name: User
+      password: guest123
+      roles:
+        - viewer
