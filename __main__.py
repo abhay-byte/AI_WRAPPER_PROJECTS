@@ -235,7 +235,7 @@ if st.session_state.authentication_status:
                     add_markdown(gemini.generate(data.get_suggested_investement(df,inputs)))
                 with st.spinner("Generating Report...",show_time=True):
                     st.header("Detailed Investments Report")
-                    add_markdown(gemini.generate(data.get_suggested_investement(df,inputs)))
+                    add_markdown(gemini.generate(data.get_report_promt(df,inputs)))
             else:
                 st.error("Fill all required fields.")
 
