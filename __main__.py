@@ -115,9 +115,9 @@ def investment_growth_prediction():
                 st.header("Suggested Investments")
                 add_markdown(gemini.generate(data.get_suggested_investement(df,inputs)))
 
-            with st.spinner("Generating further details...",show_time=True):
-                st.header("Detailed Investment Information")
-                add_markdown(gemini.generate(data.get_report_promt(inputs,df)))
+            # with st.spinner("Generating further details...",show_time=True):
+            #     st.header("Detailed Investment Information")
+            #     add_markdown(gemini.generate(data.get_report_promt(inputs,df)))
         else:
             st.error("Fill all required fields.")
 
@@ -186,7 +186,7 @@ def invest_chatbot():
     with chat_placeholder.container():
         for i in range(len(st.session_state.generated)):
             st.markdown(f"**🧑 You:** {st.session_state.past[i]}")
-            st.markdown(f"**🤖 Bot:** {st.session_state.generated[i]}")
+            st.markdown(f"**🤖 Advisor:** {st.session_state.generated[i]}")
 
     # Input field
     st.text_input("💬 Your message:", on_change=on_input_change, key="user_input")

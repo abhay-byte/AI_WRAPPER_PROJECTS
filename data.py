@@ -90,7 +90,8 @@ promt_privacy = f"""Todays Date is {today} so answers accordingly.
 Please Check the privacy policy and rate it out of 10 (Give Rating at top please), 
 and state the problems briefly."""
 
-chatbot = f"""You are a financial advisor, help the user solve his financial problems, current data
+chatbot = f"""You are a financial advisor, help the user solve his financial problems, system provided
+data -->
 {fetch_asset_price.fetch_top_trending_companies()}
 {fetch_asset_price.fetch_other_types_investement()}
 """

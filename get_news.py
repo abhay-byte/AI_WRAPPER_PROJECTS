@@ -1,8 +1,26 @@
 import feedparser
+import time
+
+# Simple in-memory cache
+_cache = {
+    'timestamp': 0,
+    'data': None
+}
+
+# Cache timeout in seconds (e.g., 10 minutes = 600 seconds)
+CACHE_TIMEOUT = 86400  
 
 def get_current_financial_news():
+    current_time = time.time()
+    
+    # Check if cache is still valid
+    if _cache['data'] is not None and (current_time - _cache['timestamp'] < CACHE_TIMEOUT):
+        print("Using cached financial news...\n")
+        return _cache['data']
 
-# Define RSS feed URLs for financial news
+    print("Fetching fresh financial news...\n")
+
+    # Define RSS feed URLs for financial news
     rss_feeds = {
         'CNBC': 'https://www.cnbc.com/id/100003114/device/rss/rss.html',
         'Reuters Business': 'http://feeds.reuters.com/reuters/businessNews',
@@ -10,7 +28,6 @@ def get_current_financial_news():
         'Economic Times': 'https://economictimes.indiatimes.com/rssfeedsdefault.cms',
         'Bloomberg': 'https://www.bloomberg.com/feed/podcast/etf-report.xml'
     }
-
 
     # Collect and store news items
     news_entries = []
@@ -29,17 +46,8 @@ def get_current_financial_news():
     # Sort by latest date if possible
     news_entries.sort(key=lambda x: x['published'], reverse=True)
 
-    # Limit to top 15
+    # Limit to top 25
     top_news = news_entries[:25]
-
-    # Print nicely
-    print("Top 15 Financial News Headlines:\n")
-    for i, entry in enumerate(top_news, start=1):
-        print(f"{i}. {entry['title']}")
-        print(f"   Source: {entry['source']}")
-        print(f"   Published: {entry['published']}")
-        print(f"   Summary: {entry['summary']}")
-        print(f"   Link: {entry['link']}\n")
 
     # Prepare single string of all news items
     news_summary_string = ""
@@ -52,8 +60,8 @@ def get_current_financial_news():
             f"Link: {entry['link']}\n\n"
         )
 
-    # Optional: print or return the full string
-    print("Combined News Summary String:\n")
-    return(news_summary_string)
+    # Update the cache
+    _cache['timestamp'] = current_time
+    _cache['data'] = news_summary_string
 
-# You can also return this string from a function or save to file
+    return news_summary_string
