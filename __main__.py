@@ -22,16 +22,16 @@ def go_to(page_name):
     st.rerun()
 
 
-def home_page():
-    st.header("🏠 Home")
+def dashboard():
+    st.header("Dashboard")
     st.subheader("Welcome Back!")
     
     col1, col2 = st.columns(2)
 
     with col1:
-        st.metric("Total Balance", "$48,920")
-        st.metric("Monthly Income", "$5,800")
-        st.metric("Monthly Expenses", "$3,200")
+        st.metric("Total Balance", "₹48,920")
+        st.metric("Monthly Income", "₹5,800")
+        st.metric("Monthly Expenses", "₹3,200")
 
     with col2:
         st.success("📅 Last Update: April 16, 2025")
@@ -106,8 +106,7 @@ def investment_growth_prediction():
                 st.header("Investment Growth Over Time") 
                 st.plotly_chart(invest.get_graph(df), use_container_width=True)
                 
-                show_dataframe = st.toggle("Show Dataframe",True)
-                
+                show_dataframe = st.toggle("Show Dataframe",True)            
                 if show_dataframe:
                     st.dataframe(df)
                     
@@ -134,8 +133,40 @@ def investment_growth_prediction():
         st.code(get_function_code(gemini.generate), language="python")
         st.code(get_function_code(data), language="python")
     
+
 def invest_type_guide():
-    st.title("Types of Investment")
+    """Displays investment type information using Streamlit expanders."""
+    st.title("Investment Type Overview")
+    st.markdown("---") # Add a horizontal rule
+
+    st.info("""
+    **Important Considerations:**
+    *   **Growth Potential is Not Guaranteed:** Past performance doesn't predict future results.
+    *   **Risk vs. Reward:** Higher potential growth usually comes with higher risk.
+    *   **Time Horizon:** Growth often depends on the investment duration.
+    *   **Diversification:** Spreading investments across types helps manage risk.
+    """)
+
+    st.write("Click on each category below to see details, examples, and suggested growth potential.")
+    st.markdown("---") 
+
+    for investment in data.investment_data:
+        with st.expander(f"**{investment['name']}**", expanded=False):
+            st.markdown(f"**Description:** {investment['description']}")
+            st.markdown("---")
+
+            st.subheader("Examples:")
+            for example in investment['examples']:
+                st.markdown(f"- {example}") 
+
+            st.markdown("---")
+            st.subheader("Suggested Growth Potential & Risk Profile:")
+            st.markdown(investment['growth_potential'])
+    st.markdown("---")
+    with st.spinner("Best Investment Type for Current Market Scenario",show_time=True):
+        st.header("Suggested Asset Types To Invest")
+        add_markdown(gemini.generate(data.get_assest_type_selection()))
+
 
 def invest_analysis():
     st.title("Portfolio Analysis")
@@ -207,14 +238,14 @@ def logout():
 
 pages = {
     "Account":[
-        st.Page(home_page, title="Home", icon=":material/home:"),
+        st.Page(dashboard, title="Dashboard", icon=":material/home:"),
         st.Page(finance_manager, title="Finance Manager", icon=":material/savings:"),
-        st.Page(settings, title="Settings", icon=":material/settings:"),
+        #st.Page(settings, title="Settings", icon=":material/settings:"),
         ],
 
     "AI Tools": [
         st.Page(investment_growth_prediction, title="Investment Growth Prediction", icon=":material/monitoring:"),
-        st.Page(invest_type_guide, title="Asset Types", icon=":material/format_list_bulleted:"),
+        st.Page(invest_type_guide, title="Investment Asset Types", icon=":material/format_list_bulleted:"),
         st.Page(invest_analysis, title="Portfolio Analysis", icon=":material/analytics:"),
         st.Page(invest_chatbot, title="Financial Advisor", icon=":material/smart_toy:"),                                                                                              
         ],
