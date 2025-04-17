@@ -135,7 +135,6 @@ currency in rupees, in lakhs and crore
 GIVE COMPLETE DIRECT SUGGESTIONS ON WHICH STOCK TO BUY OR TO INVEST IN CRYPTO OR GOLD IN A TABULAR FORM, PUT SUMMARY OF MARKET FINANCIAL NEWS
 now these are other parameter for investment: {additional_details}
 """
-    print(promt_for_suggestion)
     return promt_for_suggestion
 
 promt_pdf = f"""Do a Financial Portfolio Analysis: rate it out of 10 (Give Rating at top please), based on 

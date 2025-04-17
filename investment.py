@@ -32,9 +32,6 @@ class InvestmentInputs:
 def get_csv_data(inputs):
             data = str(gemini.generate(constant.get_systemInstructions(inputs)))
             clean_data_str = data.replace("```csv", "").replace("```", "").strip()  
-            print("\n\n\n")
-            print(now)
-            print(clean_data_str)
             return StringIO(clean_data_str)
 
 def get_graph(df):
