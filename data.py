@@ -1,4 +1,6 @@
 from datetime import date
+import fetch_asset_price
+import get_news
 today = date.today()
 data_format = {
                 "Investment Type": ["x", "y", "z", "a", "b"],
@@ -31,18 +33,22 @@ Annual Costs or Fees,{inputs.rate_of_additional_cost or '0'}%
 Applicable Tax Rate,{inputs.rate_of_tax or '0'}%
 best/ worst/ average case, {inputs.return_variability_amount}
 Projection Data (Year/Month based):
-
+Latest News (Use it to judge in where to invest would be best): {get_news.get_current_financial_news()}
+Top Trending Companies (Use it to judge in where to invest would be best): {fetch_asset_price.fetch_top_trending_companies()}
+Top IPO (Use it to judge in where to invest would be best): {fetch_asset_price.fetch_top_ipos()}
+Other Types of Investment(Use it to judge in where to invest would be best): {fetch_asset_price.fetch_other_types_investement()}
+Bond Prices: {fetch_asset_price.fetch_bond_price()}
 """
-    return additional_parameter;
+    return additional_parameter
 
 def get_systemInstructions(inputs):
     additional_parameter = get_additional_details(inputs)
 
     systemInstructions = f"""
-Generate only csv format: {data_format}, for the given: {investment_types} for amount: {inputs.amount}, given your predictions
+Generate only csv format(STRICTLY DONOT SENT ANYTHING ELSE): {data_format}, for the given: {investment_types} for amount: {inputs.amount}, given your predictions
 which is going to go over time if invested per month. Additional Parameter are: {additional_parameter},
 also give examples of this investment types {investment_types} for investment done (give data in dataframe).
-In the end Give final result, total money made, total Inflation, total tax and everything.
+In the end Give final result, total money made, total Inflation, total tax and everything (in lahks and crores).
     """
     return systemInstructions
 # To remove any unnecessary extra newlines
@@ -56,10 +62,37 @@ the additional details provided by user: {additional_details}"""
 
     return promt_investment
 
-promt_pdf = """Summerize this pdf: """
+def get_suggested_investement(df,inputs):
+    additional_details = get_additional_details(inputs)
+    promt_for_suggestion = f"""
+Based on this Dataframe {df}, suggest proper table, for what to invest in based on the following data:
+Latest News (Use it to judge in where to invest would be best): {get_news.get_current_financial_news()}
+Top Trending Companies (Use it to judge in where to invest would be best): {fetch_asset_price.fetch_top_trending_companies()}
+Top IPO (Use it to judge in where to invest would be best): {fetch_asset_price.fetch_top_ipos()}
+Other Types of Investment(Use it to judge in where to invest would be best): {fetch_asset_price.fetch_other_types_investement()}
+Bond Prices: {fetch_asset_price.fetch_bond_price()}
+currency in rupees, in lakhs and crore
+GIVE COMPLETE DIRECT SUGGESTIONS ON WHICH STOCK TO BUY OR TO INVEST IN CRYPTO OR GOLD IN A TABULAR FORM, PUT SUMMARY OF MARKET FINANCIAL NEWS
+now these are other parameter for investment: {additional_details}
+"""
+    print(promt_for_suggestion)
+    return promt_for_suggestion
+
+promt_pdf = f"""Do a Financial Portfolio Analysis: rate it out of 10 (Give Rating at top please), based on 
+Latest News (Use it to judge in where to further invest would be best): {get_news.get_current_financial_news()}
+Top Trending Companies (Use it to judge in where to further invest would be best): {fetch_asset_price.fetch_top_trending_companies()}
+Top IPO (Use it to judge in where to further invest would be best): {fetch_asset_price.fetch_top_ipos()}
+Other Types of Investment(Use it to judge in where to further invest would be best): {fetch_asset_price.fetch_other_types_investement()}
+Bond Prices: {fetch_asset_price.fetch_bond_price()}
+"""
 
 promt_privacy = f"""Todays Date is {today} so answers accordingly. 
 Please Check the privacy policy and rate it out of 10 (Give Rating at top please), 
 and state the problems briefly."""
+
+chatbot = f"""You are a financial advisor, help the user solve his financial problems, current data
+{fetch_asset_price.fetch_top_trending_companies()}
+{fetch_asset_price.fetch_other_types_investement()}
+"""
 
 

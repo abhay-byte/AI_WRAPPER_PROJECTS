@@ -11,3 +11,5 @@ PyPDF2
 python-dotenv
 feedparser
 yfinance
+fpdf
+streamlit-chat 

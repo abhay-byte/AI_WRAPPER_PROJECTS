@@ -7,12 +7,21 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def generate(input):
+    model = ["gemini-2.0-flash-thinking-exp-01-21", "gemini-2.0-flash",""]
+    try:
+        return generate_content(input,model[0])
+    except Exception as error:
+        print(error)
+        print("Trying Another Model...")
+        return generate_content(input,model[1])
+
+
+def generate_content(input,model):
     
     client = genai.Client(
         api_key=os.environ.get("GEMINI_API_KEY"),
     )
 
-    model = "gemini-2.0-flash"
     contents = [
         types.Content(
             role="user",

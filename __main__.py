@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import streamlit as st
 import pandas as pd
 import inspect
+import parser
 
 st.set_page_config(layout="wide")
 
@@ -16,9 +17,50 @@ def get_function_code(func):
 def add_markdown(text):
     st.markdown(text)    
 
+def go_to(page_name):
+    st.session_state.page = page_name
+    st.rerun()
+
+
 def home_page():
-    st.title("Home")
-    st.subheader("Financial Details")
+    st.header("🏠 Home")
+    st.subheader("Welcome Back!")
+    
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.metric("Total Balance", "$48,920")
+        st.metric("Monthly Income", "$5,800")
+        st.metric("Monthly Expenses", "$3,200")
+
+    with col2:
+        st.success("📅 Last Update: April 16, 2025")
+        st.info("💡 Tip: You can optimize your spending to save $400 more per month.")
+        st.markdown("### Quick Access")
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button("Investment Growth Prediction"):
+                go_to(investment_growth_prediction)
+            if st.button("Financial Advisor"):
+                go_to(invest_chatbot)
+
+        with col2:
+            if st.button("Asset Types"):
+                go_to(invest_type_guide)
+            if st.button("Portfolio Analysis"):
+                go_to(invest_analysis)
+
+    st.markdown("---")
+    st.subheader("Financial Overview")
+    st.bar_chart({
+        "Income": [5000, 5200, 5300, 5500, 5800],
+        "Expenses": [3200, 3100, 3300, 3400, 3200]
+    })
+
+
+
 
 def finance_manager():
     st.title("Finance Manager")
@@ -69,9 +111,12 @@ def investment_growth_prediction():
                 if show_dataframe:
                     st.dataframe(df)
                     
-                #display_investment_growth(df,inputs)
+            with st.spinner("Getting suggestions on what to invest in...",show_time=True):
+                st.header("Suggested Investments")
+                add_markdown(gemini.generate(data.get_suggested_investement(df,inputs)))
+
             with st.spinner("Generating further details...",show_time=True):
-                st.header("Investment Details")
+                st.header("Detailed Investment Information")
                 add_markdown(gemini.generate(data.get_report_promt(inputs,df)))
         else:
             st.error("Fill all required fields.")
@@ -93,11 +138,61 @@ def invest_type_guide():
     st.title("Types of Investment")
 
 def invest_analysis():
-    st.title("Investment Analysis")
+    st.title("Portfolio Analysis")
+    st.write("Get your portfolio analysed, Upload In PDF format, .pdf")
+    document_file = st.file_uploader("Choose a file to upload")
+    if document_file is not None:
+        pdf_text = parser.parse_pdf(document_file)
+        with st.spinner("Generating Summary...",show_time=True):
+            add_markdown(gemini.generate(data.promt_pdf+pdf_text))
+    
+    show_code = st.toggle("Show Code",True)
+    if show_code:
+        st.code(get_function_code(invest_analysis), language="python")
+        st.code(get_function_code(parser.parse_pdf), language="python")
+        st.code(get_function_code(gemini.generate), language="python")
+        st.code(get_function_code(data), language="python")
 
 def invest_chatbot():
-    st.title("Investment Advisor")
+    st.title("Financial Adviser")
     st.subheader("Talk to our Investment Analyser Chatbot.")
+
+    # Initialize session state variables if not already set
+    if "past" not in st.session_state:
+        st.session_state.past = []
+
+    if "generated" not in st.session_state:
+        st.session_state.generated = []
+
+    # Simulated chatbot reply (replace with real model/API later)
+    def fake_chatbot_response(user_input):
+        return (gemini.generate(data.chatbot+"User Promt: "+user_input))
+
+    # When user submits input
+    def on_input_change():
+        user_input = st.session_state.user_input
+        st.session_state.past.append(user_input)
+        bot_reply = fake_chatbot_response(user_input)
+        st.session_state.generated.append(bot_reply)
+        st.session_state.user_input = ""  # clear input field
+
+    # Clear chat history
+    def on_btn_click():
+        st.session_state.past.clear()
+        st.session_state.generated.clear()
+
+    # Chat messages layout
+    chat_placeholder = st.empty()
+    with chat_placeholder.container():
+        for i in range(len(st.session_state.generated)):
+            st.markdown(f"**🧑 You:** {st.session_state.past[i]}")
+            st.markdown(f"**🤖 Bot:** {st.session_state.generated[i]}")
+
+    # Input field
+    st.text_input("💬 Your message:", on_change=on_input_change, key="user_input")
+
+    # Clear button
+    st.button("🧹 Clear Messages", on_click=on_btn_click)
 
 def data_constants():
     st.title("Data Constants Used in the Project")
